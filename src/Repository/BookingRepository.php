@@ -21,6 +21,24 @@ class BookingRepository extends ServiceEntityRepository
         parent::__construct($registry, Booking::class);
     }
 
+    /**
+     * Find bookings for the current month.
+     *
+     * @return Booking[]
+     */
+    public function findCurrentMonthBookings(int $month, int $year): array
+    {
+        $start = new \DateTime("first day of $year-$month 00:00:00");
+        $end = new \DateTime("last day of $year-$month 23:59:59");
+
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.time BETWEEN :start AND :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function save(Booking $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
@@ -38,29 +56,4 @@ class BookingRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
-
-//    /**
-//     * @return Booking[] Returns an array of Booking objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('b')
-//            ->andWhere('b.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('b.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Booking
-//    {
-//        return $this->createQueryBuilder('b')
-//            ->andWhere('b.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }
