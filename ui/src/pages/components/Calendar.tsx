@@ -1,19 +1,12 @@
 import * as React from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import Badge from '@mui/material/Badge';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { PickersDay } from '@mui/x-date-pickers/PickersDay';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import { useQuery } from '@tanstack/react-query';
-import utc from 'dayjs/plugin/utc';
-import axios from 'axios';
-import { Card, CardContent } from '@mui/material';
-dayjs.extend(utc);
-
-const initialValue = dayjs();
+import { Stack } from '@mui/material';
+import Time from './Time';
 
 function ServerDay(props: any & { highlightedDays?: number[] }) {
   const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
@@ -31,33 +24,40 @@ function ServerDay(props: any & { highlightedDays?: number[] }) {
   );
 }
 
-export default function Calendar() {
-  const [month, setMonth] = React.useState<Dayjs>(initialValue);
-  const {
-    data: highlightedDays = [],
-    isLoading,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ['bookings'],
-    queryFn: () => axios.get(`/bookings?time=${month.endOf('month').utc().format()}`).then((response) => response.data),
-  });
+export default function Calendar({
+  initialValue,
+  isLoading,
+  isFetching,
+  highlightedDays,
+  setCurrentPeriodDate,
+  setReservationDate,
+}: {
+  initialValue: Dayjs;
+  isLoading: boolean;
+  isFetching: boolean;
+  highlightedDays: Dayjs[];
+  setCurrentPeriodDate: (value: ((prevState: dayjs.Dayjs) => dayjs.Dayjs) | dayjs.Dayjs) => void;
+  setReservationDate: (
+    value: ((prevState: dayjs.Dayjs | undefined) => dayjs.Dayjs | undefined) | dayjs.Dayjs | undefined,
+  ) => void;
+}) {
+  const [reservationMonth, setReservationMonth] = React.useState<Dayjs>(initialValue);
 
-  const handleDateChange = (date: Dayjs) => {};
+  const handleDateChange = (date: Dayjs) => setCurrentPeriodDate(date);
 
-  const handleChange = (value: Dayjs, selectionState: any, selectedView?: string) => {
-    if (selectedView === 'day') {
-      console.log(value, selectionState, selectedView);
-    }
-  };
+  const handleChange = (value: Dayjs, selectionState: any, selectedView?: string) =>
+    selectedView === 'day' && setReservationMonth(value);
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      {error ? (
-        <Card>
-          <CardContent>Error: Please try again later.</CardContent>
-        </Card>
-      ) : (
+    <Stack direction="row" spacing={2}>
+      <Time
+        key={isFetching.toString()}
+        highlightedDays={highlightedDays}
+        setReservationDate={(date: Dayjs) =>
+          setReservationDate(dayjs(reservationMonth).hour(date.hour()).minute(date.minute()))
+        }
+      />
+      <div>
         <DateCalendar
           disablePast
           defaultValue={initialValue}
@@ -73,7 +73,7 @@ export default function Calendar() {
             } as any,
           }}
         />
-      )}
-    </LocalizationProvider>
+      </div>
+    </Stack>
   );
 }

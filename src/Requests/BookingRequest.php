@@ -8,10 +8,7 @@ class BookingRequest extends BaseRequest
 {
     #[Assert\Type(\DateTimeImmutable::class)]
     #[Assert\NotBlank]
-    #[Assert\Range(
-        min: 'now',
-        max: '+12 months',
-    )]
+    #[Assert\Range(min: 'now')]
     protected ?\DateTimeImmutable $time = null;
 
     public function getTime(): \DateTimeImmutable
