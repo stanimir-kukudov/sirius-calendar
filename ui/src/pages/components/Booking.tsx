@@ -6,7 +6,7 @@ import { Box, Button, Stack, Step, StepLabel, Stepper, Typography } from '@mui/m
 import Calendar from './Calendar';
 import utc from 'dayjs/plugin/utc';
 import UserInfo, { UserInfoType } from './UserInfo';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useStep } from 'usehooks-ts';
 import Summary from './Summary';
 import { enqueueSnackbar } from 'notistack';
@@ -81,7 +81,7 @@ export default function Booking() {
       bookingMutation.mutate({ reservationDate: reservationDate.utc().format('DD-MM-YYYYTHH:mm'), userInfo });
   };
 
-  const validateUserInfo = () => {
+  const validateUserInfo = useCallback(() => {
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const bulgarianPhonePattern = /^(?:\+359|0)?(?:87|88|89|98|99|2)\d{7}$/;
     const errors: Array<keyof UserInfoType> = [];
@@ -103,11 +103,11 @@ export default function Booking() {
     }
 
     setUserInfoErrors(errors);
-  };
+  }, [userInfo?.firstName, userInfo?.lastName, userInfo?.email, userInfo?.phoneNumber, setUserInfoErrors]);
 
   useEffect(() => {
     !canGoToNextStep && validateUserInfo();
-  }, [canGoToNextStep]);
+  }, [canGoToNextStep, validateUserInfo]);
 
   return error ? (
     <Typography>Error: Please try again later.</Typography>

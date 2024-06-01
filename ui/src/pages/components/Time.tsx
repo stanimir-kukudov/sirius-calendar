@@ -17,12 +17,12 @@ export default function Time({
   return (
     <DigitalClock
       referenceDate={reservationMonth}
-      sx={{ maxHeight: 330 }}
+      sx={{ maxHeight: 330, minWidth: 81 }}
       timeStep={60}
       disablePast
       minTime={dayjs().startOf('day').hour(7)}
       maxTime={dayjs().startOf('day').hour(18)}
-      shouldDisableTime={(time, view) => !!existingBookings.find((booking) => booking.time.isSame(time))}
+      shouldDisableTime={(time) => !!existingBookings.find((booking) => booking.time.isSame(time))}
       onChange={handleChange}
       ampm={false}
     />
