@@ -70,10 +70,10 @@ abstract class BaseRequest
 
         foreach ($params as $property => $value) {
             if (property_exists($this, $property)) {
-                try {
-                    $value = new \DateTimeImmutable($value);
-                } catch (\Exception $e) {
-                    if (isset($result[$property]) && $result[$property] === 'DateTimeImmutable') {
+                if (isset($result[$property]) && $result[$property] === 'DateTimeImmutable') {
+                    try {
+                        $value = new \DateTimeImmutable($value);
+                    } catch (\Exception $e) {
                         $value = null;
                     }
                 }

@@ -7,6 +7,8 @@ import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import { Stack } from '@mui/material';
 import Time from './Time';
+import { Dispatch, SetStateAction } from 'react';
+import { BookingType } from './Booking';
 
 function ServerDay(props: any & { highlightedDays?: number[] }) {
   const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
@@ -28,18 +30,16 @@ export default function Calendar({
   initialValue,
   isLoading,
   isFetching,
-  highlightedDays,
+  existingBookings,
   setCurrentPeriodDate,
   setReservationDate,
 }: {
   initialValue: Dayjs;
   isLoading: boolean;
   isFetching: boolean;
-  highlightedDays: Dayjs[];
-  setCurrentPeriodDate: (value: ((prevState: dayjs.Dayjs) => dayjs.Dayjs) | dayjs.Dayjs) => void;
-  setReservationDate: (
-    value: ((prevState: dayjs.Dayjs | undefined) => dayjs.Dayjs | undefined) | dayjs.Dayjs | undefined,
-  ) => void;
+  existingBookings: BookingType[];
+  setCurrentPeriodDate: Dispatch<SetStateAction<Dayjs>>;
+  setReservationDate: Dispatch<SetStateAction<Dayjs | undefined>>;
 }) {
   const [reservationMonth, setReservationMonth] = React.useState<Dayjs>(initialValue);
 
@@ -51,8 +51,9 @@ export default function Calendar({
   return (
     <Stack direction="row" spacing={2}>
       <Time
-        key={isFetching.toString()}
-        highlightedDays={highlightedDays}
+        key={reservationMonth.toString()}
+        existingBookings={existingBookings}
+        reservationMonth={reservationMonth}
         setReservationDate={(date: Dayjs) =>
           setReservationDate(dayjs(reservationMonth).hour(date.hour()).minute(date.minute()))
         }
@@ -69,7 +70,7 @@ export default function Calendar({
           slots={{ day: ServerDay }}
           slotProps={{
             day: {
-              highlightedDays,
+              highlightedDays: existingBookings.map(({ time }) => time.date()),
             } as any,
           }}
         />

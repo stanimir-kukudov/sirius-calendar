@@ -39,6 +39,19 @@ class BookingRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @param \DateTimeImmutable $time
+     * @return Booking|null
+     */
+    public function findOneByTime(\DateTimeImmutable $time): ?Booking
+    {
+        return $this->createQueryBuilder('e')
+            ->where('e.time = :time')
+            ->setParameter('time', $time)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function save(Booking $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);

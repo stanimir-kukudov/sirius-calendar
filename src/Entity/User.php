@@ -6,31 +6,41 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Table;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[Table(name: 'users')]
 class User
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['list_bookings'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['list_bookings'])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['list_bookings'])]
     private ?string $lastName = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
+    #[Groups(['list_bookings'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['list_bookings'])]
     private ?string $phone = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'datetime')]
+    #[Groups(['list_bookings'])]
     private ?\DateTimeInterface $createdAt = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'datetime')]
+    #[Groups(['list_bookings'])]
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Booking::class, orphanRemoval: true)]

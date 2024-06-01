@@ -5,26 +5,34 @@ namespace App\Entity;
 use App\Repository\BookingRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Table;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: BookingRepository::class)]
+#[Table(name: 'bookings')]
 class Booking
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['list_bookings'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'bookings')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[Groups(['list_bookings'])]
     private ?User $user = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'datetime')]
+    #[Groups(['list_bookings'])]
     private ?\DateTimeInterface $time = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'datetime')]
+    #[Groups(['list_bookings'])]
     private ?\DateTimeInterface $createdAt = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'datetime')]
+    #[Groups(['list_bookings'])]
     private ?\DateTimeInterface $updatedAt = null;
 
     public function getId(): ?int

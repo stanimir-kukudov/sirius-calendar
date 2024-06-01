@@ -8,6 +8,7 @@ import { Home } from './pages/Home';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { SnackbarProvider } from 'notistack';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,14 +35,16 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <ThemeModeContext.Provider value={themeMode}>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <Layout>
-              <Home />
-            </Layout>
-          </ThemeProvider>
-        </ThemeModeContext.Provider>
+        <SnackbarProvider>
+          <ThemeModeContext.Provider value={themeMode}>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <Layout>
+                <Home />
+              </Layout>
+            </ThemeProvider>
+          </ThemeModeContext.Provider>
+        </SnackbarProvider>
       </LocalizationProvider>
     </QueryClientProvider>
   );
