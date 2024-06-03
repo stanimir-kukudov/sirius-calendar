@@ -24,10 +24,10 @@ class CreateBookingRequest extends BaseRequest
                 new Assert\Email,
             ]),
             'phoneNumber' => new Assert\Required([
+                new Assert\NotBlank,
                 new Assert\Regex('/^\d+$/'),
             ]),
         ],
-        allowMissingFields: true,
     )]
     protected array $userInfo = [];
 
